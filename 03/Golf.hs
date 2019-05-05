@@ -37,3 +37,19 @@ skips xs  =
     let selection = [[i, (2*i)+1 .. xLen] | i <- [0,1 .. xLen]]
         xLen = length xs - 1
     in map (map (xs !!)) selection
+
+-- lmFilter :: [a]-> Bool
+-- lmFilter [] = False
+-- lmFilter [x:y:z]
+--     | x < y && y > z = True
+--     | otherwise      = False
+-- lmFilter _ = False
+
+localMaxima :: [Integer] -> [Integer]
+localMaxima [] = []
+localMaxima xs = [(xs !! i) | i <- [1,2 .. penult],
+                                      let a = xs !! (i-1),
+                                      let c = xs !! (i+1),
+                                      a < (xs !! i),
+                                      c < (xs !! i)]
+        where penult = length xs - 2
