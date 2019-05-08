@@ -1,8 +1,12 @@
 {-# OPTIONS_GHC -Wall #-}
+
 module Golf where
 
+import qualified Data.Map as Map
+import qualified Data.List as List
 
-{-|
+
+{-
 Skips uses a list of lists, called selection, to filter the input list xs.
 Each sublist in selection contains the indicies of the output elements of
 each step of the hopscotch algorithm:
@@ -30,7 +34,7 @@ characters of the original list xs that are at the indicies of each sublist. For
 skips "ABCD" = map (map "ABCD" !!) selection
 => skips "ABCD" = [[map "ABCD" !! [0, 1, 2, 3 ..], [map "ABCD" !! [1, 3, 5 ..], ..]
 => skips "ABCD" = ["ABCD", "BD", "C", "D"]
-|-}
+-}
 
 skips :: [a] -> [[a]]
 skips xs  =
@@ -38,18 +42,31 @@ skips xs  =
         xLen = length xs - 1
     in map (map (xs !!)) selection
 
--- lmFilter :: [a]-> Bool
--- lmFilter [] = False
--- lmFilter [x:y:z]
---     | x < y && y > z = True
---     | otherwise      = False
--- lmFilter _ = False
+{-
+localMaxima takes a list of Integers and returns a list of the elements
+that have lower values to the left and right. For instance,
+
+[1,2,3,4] = []
+[1,2,1,2,1] = []
+
+The function uses a list comprehension with guards that select elements
+that are local maxima by comparing them against the index before and after
+-}
 
 localMaxima :: [Integer] -> [Integer]
-localMaxima [] = []
 localMaxima xs = [(xs !! i) | i <- [1,2 .. penult],
-                                      let a = xs !! (i-1),
-                                      let c = xs !! (i+1),
-                                      a < (xs !! i),
-                                      c < (xs !! i)]
-        where penult = length xs - 2
+                                    let a = xs !! (i-1),
+                                    let c = xs !! (i+1),
+                                    a < (xs !! i),
+                                    c < (xs !! i)]
+                                    where penult = length xs - 2
+
+--Solution does not work fully since the histogram is horizontal instead of vertical
+occurences :: (Num a, Ord a) => [a] -> [(a, a)]
+occurences xs = Map.toList (Map.fromListWith (+) [(x, 1) | x <- (List.sort xs)])
+
+prntLine :: (Show a, Integral a) => (a, a) -> String
+prntLine (num, occur) = (show num) ++ "|" ++ replicate (fromIntegral occur) '*'
+
+histogram :: [Integer] -> String
+histogram xs = unlines (map prntLine (occurences xs)) ++ " 0123456789\n"
