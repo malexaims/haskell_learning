@@ -4,6 +4,7 @@ module Golf where
 
 import qualified Data.Map as Map
 import qualified Data.List as List
+import qualified Data.Char as Char
 
 
 {-
@@ -61,12 +62,25 @@ localMaxima xs = [(xs !! i) | i <- [1,2 .. penult],
                                     c < (xs !! i)]
                                     where penult = length xs - 2
 
---Solution does not work fully since the histogram is horizontal instead of vertical
-occurences :: (Num a, Ord a) => [a] -> [(a, a)]
-occurences xs = Map.toList (Map.fromListWith (+) [(x, 1) | x <- (List.sort xs)])
+makeListofList :: (a,a) -> [a]
+makeListofList (a, b) = [a, b]
 
-prntLine :: (Show a, Integral a) => (a, a) -> String
-prntLine (num, occur) = (show num) ++ "|" ++ replicate (fromIntegral occur) '*'
+--Solution does not work fully since the histogram is
+-- horizontal instead of vertical. Not sure how to
+occurences :: (Num a, Ord a) => [a] -> [[a]]
+occurences xs = map (makeListofList)
+                    (Map.toList (Map.fromListWith
+                    (+) [(x, 1) | x <- (List.sort xs)]))
+
+prntLine :: (Show a, Integral a) => [a] -> String
+prntLine [num, occur] = (show num) ++ "|" ++
+                        replicate (fromIntegral occur) '*'
+prntLine _ = []
 
 histogram :: [Integer] -> String
-histogram xs = unlines (map prntLine (occurences xs)) ++ " 0123456789\n"
+histogram xs = unlines (map prntLine (occurs)) ++ " 0" ++
+               (filter Char.isAlphaNum (unwords $
+               map show [1,2..maxOccur]))
+               ++ "\n"
+                  where maxOccur = maximum (map (!! 1) occurs)
+                        occurs = occurences xs
