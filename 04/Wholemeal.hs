@@ -76,3 +76,12 @@ xor :: [Bool] -> Bool
 xor = odd
       . foldl (+) 0
       . map convBool
+
+-- Implement map as a fold. That is, complete the definition
+-- map’ :: (a -> b) -> [a] -> [b]
+-- map’ f = foldr ...
+-- in such a way that map’ behaves identically to the standard map
+-- function.
+
+map' :: (a -> b) -> [a] -> [b]
+map' f xs = foldr (\x accum -> f x : accum) [] xs
