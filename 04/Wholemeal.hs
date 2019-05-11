@@ -66,3 +66,13 @@ foldTree = foldr treeInsert Leaf
 -- xor [False, True, False] == True
 -- xor [False, True, False, False, True] == False
 -- Your solution must be implemented using a fold.
+
+convBool :: Bool -> Int
+convBool x
+    | x         = 1
+    | otherwise = 0
+
+xor :: [Bool] -> Bool
+xor = odd
+      . foldl (+) 0
+      . map convBool
