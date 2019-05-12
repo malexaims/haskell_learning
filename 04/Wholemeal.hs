@@ -100,9 +100,10 @@ sundaram (a, b) = a + b + (2*a*b)
 
 sieveSundaram :: Integer -> [Integer]
 sieveSundaram m = filter (<m)
-                  . map (\x -> 2*x + 1 )
-                  $ filter notelemSols l
+                  $ map (\x -> 2*x + 1 )
+                  $ filter (\x -> x `notElem` (map sundaram $ sieve l)) l
     where n = m `div` 2
           l = [1,2..n]
-          sols = map sundaram $ sieve l
-          notelemSols a = a `notElem` sols
+          {--I thought the where statements were more readable--}
+          -- sols = map sundaram $ sieve l
+          -- notelemSols a = a `notElem` sols
