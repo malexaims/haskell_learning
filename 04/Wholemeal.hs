@@ -2,6 +2,7 @@
 
 module Wholemeal where
 
+
 --EX 1. Implement these using "wholemeal style"
 
 -- fun1 :: [Integer] -> Integer
@@ -58,7 +59,7 @@ height (Node x _ _ _) = x
 foldTree :: [a] -> Tree a
 foldTree = foldr treeInsert Leaf
 
---Ex 3. Implement a function
+--Ex 3.1 Implement a function
 -- xor :: [Bool] -> Bool
 -- which returns True if and only if there are an odd number of True
 -- values contained in the input list. It does not matter how many
@@ -77,7 +78,7 @@ xor = odd
       . foldl (+) 0
       . map convBool
 
--- Implement map as a fold. That is, complete the definition
+-- 3.2 Implement map as a fold. That is, complete the definition
 -- map’ :: (a -> b) -> [a] -> [b]
 -- map’ f = foldr ...
 -- in such a way that map’ behaves identically to the standard map
@@ -85,3 +86,23 @@ xor = odd
 
 map' :: (a -> b) -> [a] -> [b]
 map' f xs = foldr (\x accum -> f x : accum) [] xs
+
+--Ex 4. Implement the sieve of sundaran using function composition
+
+cartProd :: [a] -> [b] -> [(a, b)]
+cartProd xs ys = [(x, y) | x <- xs, y <- ys ]
+
+sieve :: [a] -> [(a, a)]
+sieve xs = cartProd xs xs
+
+sundaram :: (Num a) => (a, a) -> a
+sundaram (a, b) = a + b + (2*a*b)
+
+sieveSundaram :: Integer -> [Integer]
+sieveSundaram m = filter (<m)
+                  . map (\x -> 2*x + 1 )
+                  $ filter notelemSols l
+    where n = m `div` 2
+          l = [1,2..n]
+          sols = map sundaram $ sieve l
+          notelemSols a = a `notElem` sols
