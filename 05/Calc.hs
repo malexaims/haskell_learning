@@ -25,6 +25,22 @@ instance Expr Bool where
   add = (&&)
   mul = (||)
 
+newtype MinMax = MinMax Integer
+  deriving (Eq, Show, Ord)
+
+instance Expr MinMax where
+  lit = MinMax
+  add = min
+  mul = max
+
+newtype Mod7 = Mod7 Integer
+  deriving (Eq, Show, Ord)
+
+instance Expr Mod7 where
+  lit x = Mod7 (x `mod` 7)
+  add (Mod7 x) (Mod7 y) = lit $ x+y
+  mul (Mod7 x) (Mod7 y) = lit $ x*y
+
 reify :: ExprT -> ExprT
 reify = id
 
@@ -37,3 +53,6 @@ evalStr :: String -> Maybe Integer
 evalStr expr = case (P.parseExp E.Lit E.Add E.Mul expr) of
                   Just s -> Just $ eval s
                   Nothing -> Nothing
+
+testExp :: Expr a => Maybe a
+testExp = parseExp lit add mul "(3 * -4) + 5"
