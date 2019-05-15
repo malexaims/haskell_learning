@@ -3,6 +3,19 @@
 import ExprT as E
 import Parser as P
 
+class Expr a where
+  lit :: Integer -> a
+  add :: a -> a -> a
+  mul :: a -> a -> a
+
+instance Expr ExprT where
+  lit x = E.Lit x
+  add x y = E.Add x y
+  mul x y = E.Mul x y
+
+reify :: ExprT -> ExprT
+reify = id
+
 eval :: ExprT -> Integer
 eval (E.Lit x) = x
 eval (E.Add x y) = eval x + eval y
