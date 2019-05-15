@@ -13,6 +13,18 @@ instance Expr ExprT where
   add x y = E.Add x y
   mul x y = E.Mul x y
 
+instance Expr Integer where
+  lit x = x
+  add x y = x + y
+  mul x y = x * y
+
+instance Expr Bool where
+  lit x
+      | (x >= 0)  = True
+      | otherwise = False
+  add = (&&)
+  mul = (||)
+
 reify :: ExprT -> ExprT
 reify = id
 
