@@ -4,12 +4,18 @@ module Scrabble where
 import Data.Monoid
 import Data.Char
 
+import Control.Applicative
+import Control.Monad (liftM, ap)
+
 newtype Score = Score Int
   deriving (Show, Eq, Num, Ord)
 
 instance Monoid Score where
   mempty = Score 0
   mappend = (+)
+
+instance Semigroup Score where
+  Score x <> Score y = Score $ x+y
 
 ones = "AEIOURSTLN"
 twos = "DG"

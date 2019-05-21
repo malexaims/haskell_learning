@@ -26,3 +26,6 @@ instance Sized b => Sized (a,b) where
 instance Monoid Size where
   mempty  = Size 0
   mappend = (+)
+
+instance Semigroup Size where
+  Size x <> Size y = Size $ x+y
