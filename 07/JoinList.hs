@@ -2,6 +2,7 @@ module JoinList where
 
 import Data.Monoid
 import Sized
+import Scrabble
 
 --m is for tracking monodial annotations to the structure
 data JoinList m a = Empty
@@ -61,23 +62,6 @@ takeJ i j@(Append m j1 j2)
                           where sizeJ1 = getSize . size . tag $ j1
                                 sizeM = getSize . size $ m
 
-az :: JoinList Size Char
-az = foldr1 (+++) $ Single (Size 1) <$> ['a'..'z']
-
-exercise2 = do
-  print $ indexJ 7 az == indexJ 7 az
-  print $ Just 'a'    == indexJ 0  az
-  print $ Nothing     == indexJ 42 az
-  print $ Nothing     == indexJ (-3) az
-  print $ ['f'..'z']  == jlToList (dropJ 5 az)
-  print $ ['a'..'e'] == jlToList (takeJ 5 az)
-
-
--- someJoinList =
---   Append (Product 210)
---     (Append (Product 30)
---       (Single (Product 5) 'y')
---       (Append (Product 6)
---         (Single (Product 2) 'e')
---         (Single (Product 3) 'a')))
---         (Single (Product 7) 'h')
+scoreLine :: String -> JoinList Score String
+scoreLine l = Single m l
+                where m = scoreString l
