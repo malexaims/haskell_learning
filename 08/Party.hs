@@ -3,6 +3,7 @@
 module Party where
 
 import Data.Tree
+import qualified Data.List as L
 
 import Employee
 
@@ -47,3 +48,20 @@ pairs (Node boss []) = (glCons boss mempty, mempty)
 pairs (Node boss ts) = nextLevel boss $ map pairs ts
 
 exercise4 = maxFun testCompany
+
+getFun :: GuestList -> Fun
+getFun (GL _ fs) = fs
+
+getNames :: GuestList -> [Name]
+getNames (GL n _) = map empName n
+
+getGuests :: Tree Employee -> [Name]
+getGuests t = topLine : (L.sort names)
+              where topLine = "Total fun: " ++ (show totalFun)
+                    best = maxFun t
+                    totalFun = getFun best
+                    names = getNames best
+
+main :: IO ()
+main = readFile "company.txt" >>=
+       mapM_ putStrLn . getGuests . read
