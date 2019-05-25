@@ -13,6 +13,13 @@ type Fun  = Integer
 data Employee = Emp { empName :: Name, empFun :: Fun }
   deriving (Show, Read, Eq)
 
+-- A type to store a list of guests and their total fun score.
+data GuestList = GL [Employee] Fun
+  deriving (Show, Eq)
+
+instance Ord GuestList where
+  compare (GL _ f1) (GL _ f2) = compare f1 f2
+
 -- A small company hierarchy to use for testing purposes.
 testCompany :: Tree Employee
 testCompany
@@ -43,10 +50,3 @@ testCompany2
       [ Node (Emp "Sam" 4) [] -- (4, 0)
       ]
     ]
-
--- A type to store a list of guests and their total fun score.
-data GuestList = GL [Employee] Fun
-  deriving (Show, Eq)
-
-instance Ord GuestList where
-  compare (GL _ f1) (GL _ f2) = compare f1 f2

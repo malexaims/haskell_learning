@@ -2,23 +2,22 @@ import qualified Data.Bits as B
 import Numeric (showIntAtBase, readInt)
 import Data.Char  (digitToInt)
 import Data.Maybe (listToMaybe)
--- import qualified Data.Number as C
+
+
+data Stream a = Cons a (Stream a) deriving (Eq, Ord)
+
+instance Show a => Show (Stream a) where
+  show = show . take 20 . streamToList
+
 
 fib :: Integer -> Integer
 fib 0 = 0
 fib 1 = 1
 fib n = fib (n-1) + fib (n-2)
 
-fibs1 = map fib [0..]
-
 fib2 :: Int -> Integer
 fib2 n = fibs !! n
   where fibs = 0 : 1 : zipWith (+) fibs (drop 1 fibs)
-
-data Stream a = Cons a (Stream a) deriving (Eq, Ord)
-
-instance Show a => Show (Stream a) where
-  show = show . take 20 . streamToList
 
 streamToList :: Stream a -> [a]
 streamToList (Cons x s) = x : (streamToList s)
@@ -43,7 +42,14 @@ interleaveStreams (Cons x s1) (Cons y s2) = Cons x
 getLog2 :: (B.Bits a, Integral a, Integral b) => a -> b
 getLog2 0 = 0
 getLog2 n = floor $ logBase (fromIntegral 2)
-            $ fromIntegral $ (B..&.) n (-n)
+            $ fromIntegral $ (B..&.) (n) (-n) --Bitwise operation to find power of 2 that divides n
+                                            --Needed to liberally use fromIntegral for floor and logBase
+                                            --to work. Consider fixing.
 
 ruler :: Stream Integer
 ruler = interleaveStreams (streamMap getLog2 nats) (streamRepeat 0)
+
+
+fibs1 = map fib [0..]
+
+fibs2 = map fib2 [0..]
