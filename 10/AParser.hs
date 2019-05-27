@@ -57,3 +57,20 @@ posInt = Parser f
 ------------------------------------------------------------
 -- Your code goes below here
 ------------------------------------------------------------
+--Ex. 1
+instance Functor Parser where
+  fmap f1 (Parser f2) = Parser $ fmap (first f1) . f2
+
+--Applies function f to head of tuple
+first :: (a -> b) -> (a,c) -> (b,c)
+first f (x, y) = (f x, y)
+
+--Ex. 2
+instance Applicative Parser where
+  pure a = Parser (\xs -> Just (a, xs))
+  p1 <*> p2 = Parser f3
+        where f3 str = case runParser p1 str of --First run p1
+                        Nothing -> Nothing --If either p1 or p2 fails, the whole thing fails
+                        Just (y, ys) -> case runParser p2 ys of --Pass remaining inputs to p2
+                          Nothing -> Nothing  --If either p1 or p2 fails, the whole thing fails
+                          Just (z, zs) -> Just (y z, zs) --Return result of applying the function to the value
