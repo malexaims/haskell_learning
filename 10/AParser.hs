@@ -2,11 +2,14 @@
    due Monday, 1 April
 -}
 
+{-# LANGUAGE OverloadedStrings #-}
+
 module AParser where
 
 import           Control.Applicative
 
 import           Data.Char
+import           qualified Data.Text as T
 
 -- A parser for a value of type a is a function which takes a String
 -- represnting the input to be parsed, and succeeds or fails; if it
@@ -74,3 +77,24 @@ instance Applicative Parser where
                         Just (y, ys) -> case runParser p2 ys of --Pass remaining inputs to p2
                           Nothing -> Nothing  --If either p1 or p2 fails, the whole thing fails
                           Just (z, zs) -> Just (y z, zs) --Return result of applying the function to the value
+
+--Ex 3.
+abParser :: Parser (Char, Char)
+-- abParser = Parser f
+--   where f xs
+--           | T.isInfixOf "ab" $ T.pack xs = Just (('a', 'b'), rest)
+--           | otherwise = Nothing
+--           where rest = filter (\x -> (x /= 'a') && (x /= 'b')) xs
+abParser = (,) <$> char 'a' <*> char 'b'
+
+abParser_ :: Parser ()
+-- abParser_ = Parser f
+--   where f xs
+--           | T.isInfixOf "ab" $ T.pack xs = Just ((), rest)
+--           | otherwise = Nothing
+--           where rest = filter (\x -> (x /= 'a') && (x /= 'b')) xs
+-- abParser_ = const () <$> ((,) <$> char 'a' <*> char 'b')
+abParser_ = const () <$> abParser
+
+intPair :: Parser [Integer]
+intPair = (\x _ y -> [x, y]) <$> posInt <*> char ' ' <*> posInt
