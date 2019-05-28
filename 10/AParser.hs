@@ -98,3 +98,24 @@ abParser_ = const () <$> abParser
 
 intPair :: Parser [Integer]
 intPair = (\x _ y -> [x, y]) <$> posInt <*> char ' ' <*> posInt
+
+instance Alternative Parser where
+  empty = Parser (\_ -> Nothing)
+  p1 <|> p2 = Parser p
+              where p str = case runParser p1 str of
+                              Just (y, ys) -> Just (y, ys)
+                              Nothing -> case runParser p2 str of
+                                Just (z, zs) -> Just (z, zs)
+                                Nothing -> Nothing
+
+upper :: Parser Char
+upper = Parser f
+  where f (x:xs)
+          | isUpper x = Just (x, xs)
+          | otherwise = Nothing
+
+upper_ :: Parser ()
+upper_ = const () <$> upper
+
+intOrUppercase :: Parser ()
+intOrUppercase = (const ()) <$> posInt <|> upper_
