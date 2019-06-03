@@ -20,6 +20,7 @@ instance Random DieValue where
 die :: Rand StdGen DieValue
 die = getRandom
 
+dice n = replicateM n die
 ------------------------------------------------------------
 -- Risk
 
@@ -28,6 +29,11 @@ type Army = Int
 data Battlefield = Battlefield { attackers :: Army, defenders :: Army }
 
 --Ex. 2
+skirm :: Bool -> Battlefield -> Battlefield
+skirm check (Battlefield a d)
+      | check = Battlefield (a-1) d
+      | otherwise = Battlefield a (d-1)
+
 battle :: Battlefield -> Rand StdGen Battlefield
 battle bf = do
   aRolls <- dice at
@@ -38,7 +44,3 @@ battle bf = do
   return $ foldr skirm bf rolls
   where at = min 3 ((attackers bf) - 1) :: Army
         def = min 2 (defenders bf) :: Army
-        skirm check (Battlefield a d)
-              | check = Battlefield (a-1) d
-              | otherwise = Battlefield a (d-1)
-        dice n = replicateM n die
