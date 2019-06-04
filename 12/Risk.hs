@@ -27,6 +27,7 @@ dice n = replicateM n die
 type Army = Int
 
 data Battlefield = Battlefield { attackers :: Army, defenders :: Army }
+  deriving (Show  )
 
 --Ex. 2
 skirm :: Bool -> Battlefield -> Battlefield
@@ -44,3 +45,36 @@ battle bf = do
   return $ foldr skirm bf rolls
   where at = min 3 ((attackers bf) - 1) :: Army
         def = min 2 (defenders bf) :: Army
+
+
+--Ex. 3
+victory :: Battlefield -> Bool
+victory bf
+    | defenders bf == 0 = True
+    | attackers bf < 2  = True
+    | otherwise = False
+
+invade :: Battlefield -> Rand StdGen Battlefield
+invade bf
+    | victory bf = return bf
+    | otherwise  = battle bf >>= invade
+
+--Ex 4.
+winner :: Battlefield -> Int --1 if attackers win, else 0
+winner bf
+  | defenders bf == 0 = 1
+  | attackers bf < 2  = 0
+  | otherwise = error "Use only on finished battles"
+
+successProb :: Battlefield -> Rand StdGen Double
+successProb bf = do
+    sims <- (replicateM 1000 $ invade bf)
+    let awins = fromIntegral $ sum $ map winner sims
+    return $ awins / (fromIntegral 1000)
+
+main :: IO ()
+main = do
+  let battlef = Battlefield 40 100
+  print =<< (evalRandIO $ battle battlef)
+  print =<< (evalRandIO $ invade battlef)
+  print =<< (evalRandIO $ successProb battlef)
