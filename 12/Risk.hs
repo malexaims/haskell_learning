@@ -27,7 +27,7 @@ dice n = replicateM n die
 type Army = Int
 
 data Battlefield = Battlefield { attackers :: Army, defenders :: Army }
-  deriving (Show  )
+  deriving (Show)
 
 --Ex. 2
 skirm :: Bool -> Battlefield -> Battlefield
@@ -74,7 +74,11 @@ successProb bf = do
 
 main :: IO ()
 main = do
-  let battlef = Battlefield 40 100
+  putStrLn "Number of Attackers: "
+  a <- getLine
+  putStrLn "Number of Defenders: "
+  d <- getLine
+  let battlef = Battlefield (read a) (read d)
   print =<< (evalRandIO $ battle battlef)
   print =<< (evalRandIO $ invade battlef)
   print =<< (evalRandIO $ successProb battlef)
